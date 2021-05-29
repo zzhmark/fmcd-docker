@@ -6,9 +6,10 @@ services:
     stdin_open: true
     tty: true
     restart: always
-    image: odehan/ccf-db
+#    image: odehan/ccf-db
+    build: ./ccf-db
     links:
-      - ccf-db-backend
+      - ccf-db-backend:backend
     ports:
       - 80:3000
 
@@ -16,9 +17,21 @@ services:
     stdin_open: true
     tty: true
     restart: always
-    image: odehan/ccf-db-backend
+#    image: odehan/ccf-db-backend
+    build: ./ccf-db-backend
     links:
-      - mongo
+      - mongo:mongo
+      - es:elasticsearch
+
+  es:
+    build: ./es
+    restart: always
+    environment:
+      - network.host=0.0.0.0
+    ports:
+      - 9233:9200
+    volumes:
+      - ./data_es:/usr/share/elasticsearch/data
 
   mongo:
     image: mongo
